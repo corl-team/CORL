@@ -593,7 +593,7 @@ def action_fn(actor: TrainState) -> Callable:
 
 
 @pyrallis.wrap()
-def main(config: Config):
+def train(config: Config):
     dict_config = asdict(config)
     dict_config["mlc_job_name"] = os.environ.get("PLATFORM_JOB_NAME")
 
@@ -757,4 +757,4 @@ def main(config: Config):
 
 
 if __name__ == "__main__":
-    main()
+    train()

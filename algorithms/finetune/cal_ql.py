@@ -670,7 +670,7 @@ class CalQL:
         mc_returns: torch.Tensor,
         alpha: torch.Tensor,
         log_dict: Dict,
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    ) -> torch.Tensor:
         q1_predicted = self.critic_1(observations, actions)
         q2_predicted = self.critic_2(observations, actions)
 
@@ -874,7 +874,7 @@ class CalQL:
             )
         )
 
-        return qf_loss, alpha_prime, alpha_prime_loss
+        return qf_loss
 
     def train(self, batch: TensorBatch) -> Dict[str, float]:
         (
@@ -904,7 +904,7 @@ class CalQL:
         )
 
         """ Q function loss """
-        qf_loss, alpha_prime, alpha_prime_loss = self._q_loss(
+        qf_loss = self._q_loss(
             observations,
             actions,
             next_observations,
