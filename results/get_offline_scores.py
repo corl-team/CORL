@@ -10,7 +10,7 @@ dataframe = pd.read_csv("runs_tables/offline_urls.csv")
 api = wandb.Api(timeout=29)
 
 
-def get_run_scores(run_id, is_dt=False):
+def get_run_scores(run_id, is_dt=False, is_awac=False):
     run = api.run(run_id)
     score_key = None
     all_scores = []
@@ -31,6 +31,8 @@ def get_run_scores(run_id, is_dt=False):
                 break
     for _, row in run.history(keys=[score_key], samples=5000).iterrows():
         all_scores.append(row[score_key])
+    if is_awac and len(all_scores) > 200:
+        all_scores = all_scores[::5]
     return all_scores
 
 
@@ -42,7 +44,7 @@ def process_runs(df):
         df.iterrows(), desc="Runs scores downloading", position=0, leave=True
     ):
         full_scores[row["algorithm"]][row["dataset"]].append(
-            get_run_scores(row["url"], row["algorithm"] == "DT")
+            get_run_scores(row["url"], row["algorithm"] == "DT", row["algorithm"] == "AWAC")
         )
     return full_scores
 
