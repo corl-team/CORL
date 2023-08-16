@@ -23,7 +23,6 @@ TensorBatch = List[torch.Tensor]
 
 @dataclass
 class TrainConfig:
-    # Experiment
     device: str = "cuda"
     env: str = "halfcheetah-medium-expert-v2"  # OpenAI gym environment name
     seed: int = 0  # Sets Gym, PyTorch and Numpy seeds
@@ -32,8 +31,6 @@ class TrainConfig:
     max_timesteps: int = int(1e6)  # Max time steps to run environment
     checkpoints_path: Optional[str] = None  # Save path
     load_model: str = ""  # Model load file name, "" doesn't load
-
-    # CQL
     buffer_size: int = 2_000_000  # Replay buffer size
     batch_size: int = 256  # Batch size for all networks
     discount: float = 0.99  # Discount factor
@@ -60,7 +57,6 @@ class TrainConfig:
     reward_scale: float = 1.0  # Reward scale for normalization
     reward_bias: float = 0.0  # Reward bias for normalization
 
-    # AntMaze hacks
     bc_steps: int = int(0)  # Number of BC steps at start
     reward_scale: float = 5.0  # Reward scale for normalization
     reward_bias: float = -1.0  # Reward bias for normalization

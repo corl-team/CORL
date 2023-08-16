@@ -138,7 +138,7 @@ The general recipe looks like this. First, create wandb seep config:
 ```yaml title="sweep_config.yaml"
 entity: corl-team
 project: CORL
-program: algorithms/offlien/dt.py
+program: algorithms/offline/dt.py
 method: grid
 parameters:
   # specify all configs to run for the choosen algorithm
@@ -154,4 +154,4 @@ parameters:
 Then proceed as usual. Create wandb sweep with `wandb sweep sweep_config.yaml`, then run agents with `wandb agent <agent_id>`. 
 This will train multiple seeds for each config.
 
-All configs with full hyperparameters for all datasets are in [`configs`](https://github.com/corl-team/CORL/tree/main/configs).
+All configs with full hyperparameters for all datasets and algorithms are in [`configs`](https://github.com/corl-team/CORL/tree/main/configs).
