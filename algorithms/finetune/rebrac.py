@@ -3,30 +3,27 @@ import os
 os.environ["TF_CUDNN_DETERMINISTIC"] = "1"
 
 import math
-import wandb
+import random
 import uuid
 from copy import deepcopy
-import pyrallis
-import random
+from dataclasses import asdict, dataclass
+from functools import partial
+from typing import Any, Callable, Dict, Sequence, Tuple, Union
 
 import chex
 import d4rl  # noqa
+import flax.linen as nn
 import gym
 import jax
+import jax.numpy as jnp
 import numpy as np
 import optax
+import pyrallis
 import tqdm
-from typing import Sequence, Union
-
-from functools import partial
-from dataclasses import dataclass, asdict
+import wandb
 from flax.core import FrozenDict
-from typing import Dict, Tuple, Any, Callable
-import flax.linen as nn
-import jax.numpy as jnp
-from tqdm.auto import trange
-
 from flax.training.train_state import TrainState
+from tqdm.auto import trange
 
 ENVS_WITH_GOAL = ("antmaze", "pen", "door", "hammer", "relocate")
 
@@ -404,7 +401,8 @@ class OnlineReplayBuffer(Dataset):
 
     def initialize_with_dataset(self, dataset: Dataset,
                                 num_samples=None):
-        assert self.insert_index == 0, 'Can insert a batch online in an empty replay buffer.'
+        assert self.insert_index == 0, \
+            'Can insert a batch online in an empty replay buffer.'
 
         dataset_size = len(dataset.observations)
 
@@ -412,7 +410,8 @@ class OnlineReplayBuffer(Dataset):
             num_samples = dataset_size
         else:
             num_samples = min(dataset_size, num_samples)
-        assert self.capacity >= num_samples, 'Dataset cannot be larger than the replay buffer capacity.'
+        assert self.capacity >= num_samples, \
+            'Dataset cannot be larger than the replay buffer capacity.'
 
         if num_samples < dataset_size:
             perm = np.random.permutation(dataset_size)
@@ -459,12 +458,16 @@ class D4RLDataset(Dataset):
                  discount: float,
                  clip_to_eps: bool = False,
                  eps: float = 1e-5):
-        d4rl_data = qlearning_dataset(env, env_name, normalize_reward=normalize_reward, discount=discount)
+        d4rl_data = qlearning_dataset(
+            env, env_name, normalize_reward=normalize_reward, discount=discount
+        )
         dataset = {
             "states": jnp.asarray(d4rl_data["observations"], dtype=jnp.float32),
             "actions": jnp.asarray(d4rl_data["actions"], dtype=jnp.float32),
             "rewards": jnp.asarray(d4rl_data["rewards"], dtype=jnp.float32),
-            "next_states": jnp.asarray(d4rl_data["next_observations"], dtype=jnp.float32),
+            "next_states": jnp.asarray(
+                d4rl_data["next_observations"], dtype=jnp.float32
+            ),
             "next_actions": jnp.asarray(d4rl_data["next_actions"], dtype=jnp.float32),
             "dones": jnp.asarray(d4rl_data["terminals"], dtype=jnp.float32),
             "mc_returns": jnp.asarray(d4rl_data["mc_returns"], dtype=jnp.float32)
@@ -625,7 +628,9 @@ def update_actor(
         loss = (beta * bc_penalty - lmbda * q_values).mean()
 
         # logging stuff
-        random_actions = jax.random.uniform(random_action_key, shape=batch["actions"].shape, minval=-1.0, maxval=1.0)
+        random_actions = jax.random.uniform(
+            random_action_key, shape=batch["actions"].shape, minval=-1.0, maxval=1.0
+        )
         new_metrics = metrics.update({
             "actor_loss": loss,
             "bc_mse_policy": bc_penalty.mean(),
@@ -671,11 +676,16 @@ def update_critic(
     next_actions = jax.numpy.clip(next_actions + noise, -1, 1)
 
     bc_penalty = ((next_actions - batch["next_actions"]) ** 2).sum(-1)
-    next_q = critic.apply_fn(critic.target_params, batch["next_states"], next_actions).min(0)
+    next_q = critic.apply_fn(
+        critic.target_params, batch["next_states"], next_actions
+    ).min(0)
     next_q = next_q - beta * bc_penalty
     target_q = jax.lax.cond(
         use_calibration,
-        lambda: jax.numpy.maximum(batch["rewards"] + (1 - batch["dones"]) * gamma * next_q, batch['mc_returns']),
+        lambda: jax.numpy.maximum(
+            batch["rewards"] + (1 - batch["dones"]) * gamma * next_q,
+            batch['mc_returns']
+        ),
         lambda: batch["rewards"] + (1 - batch["dones"]) * gamma * next_q
     )
 
@@ -686,7 +696,9 @@ def update_critic(
         loss = ((q - target_q[None, ...]) ** 2).mean(1).sum(0)
         return loss, q_min
 
-    (loss, q_min), grads = jax.value_and_grad(critic_loss_fn, has_aux=True)(critic.params)
+    (loss, q_min), grads = jax.value_and_grad(
+        critic_loss_fn, has_aux=True
+    )(critic.params)
     new_critic = critic.apply_gradients(grads=grads)
     new_metrics = metrics.update({
         "critic_loss": loss,
@@ -712,11 +724,13 @@ def update_td3(
         use_calibration: bool,
 ):
     key, new_critic, new_metrics = update_critic(
-        key, actor, critic, batch, gamma, critic_bc_coef, tau, policy_noise, noise_clip, use_calibration, metrics
+        key, actor, critic, batch, gamma, critic_bc_coef, tau,
+        policy_noise, noise_clip, use_calibration, metrics
     )
-    key, new_actor, new_critic, new_metrics = update_actor(key, actor,
-                                                           new_critic, batch, actor_bc_coef, tau, normalize_q,
-                                                           new_metrics)
+    key, new_actor, new_critic, new_metrics = update_actor(
+        key, actor, new_critic, batch, actor_bc_coef, tau,
+        normalize_q, new_metrics
+    )
     return key, new_actor, new_critic, new_metrics
 
 
@@ -736,7 +750,8 @@ def update_td3_no_targets(
         use_calibration: bool,
 ):
     key, new_critic, new_metrics = update_critic(
-        key, actor, critic, batch, gamma, critic_bc_coef, tau, policy_noise, noise_clip, use_calibration, metrics
+        key, actor, critic, batch, gamma, critic_bc_coef, tau,
+        policy_noise, noise_clip, use_calibration, metrics
     )
     return key, actor, new_critic, new_metrics
 
@@ -766,7 +781,9 @@ def train(config: Config):
         id=str(uuid.uuid4()),
     )
     buffer = ReplayBuffer()
-    buffer.create_from_d4rl(config.dataset_name, config.normalize_reward, config.normalize_states)
+    buffer.create_from_d4rl(
+        config.dataset_name, config.normalize_reward, config.normalize_states
+    )
 
     key = jax.random.PRNGKey(seed=config.train_seed)
     key, actor_key, critic_key = jax.random.split(key, 3)
@@ -774,8 +791,10 @@ def train(config: Config):
     init_state = buffer.data["states"][0][None, ...]
     init_action = buffer.data["actions"][0][None, ...]
 
-    actor_module = DetActor(action_dim=init_action.shape[-1], hidden_dim=config.hidden_dim, layernorm=config.actor_ln,
-                            n_hiddens=config.actor_n_hiddens)
+    actor_module = DetActor(
+        action_dim=init_action.shape[-1], hidden_dim=config.hidden_dim,
+        layernorm=config.actor_ln, n_hiddens=config.actor_n_hiddens
+    )
     actor = ActorTrainState.create(
         apply_fn=actor_module.apply,
         params=actor_module.init(actor_key, init_state),
@@ -783,8 +802,10 @@ def train(config: Config):
         tx=optax.adam(learning_rate=config.actor_learning_rate),
     )
 
-    critic_module = EnsembleCritic(hidden_dim=config.hidden_dim, num_critics=2, layernorm=config.critic_ln,
-                                   n_hiddens=config.critic_n_hiddens)
+    critic_module = EnsembleCritic(
+        hidden_dim=config.hidden_dim, num_critics=2,
+        layernorm=config.critic_ln, n_hiddens=config.critic_n_hiddens
+    )
     critic = CriticTrainState.create(
         apply_fn=critic_module.apply,
         params=critic_module.init(critic_key, init_state, init_action),
@@ -804,13 +825,19 @@ def train(config: Config):
         "critic": critic,
         "buffer": buffer,
         "delayed_updates": jax.numpy.equal(
-            jax.numpy.arange(config.num_offline_updates + config.num_online_updates) % config.policy_freq, 0
+            jax.numpy.arange(
+                config.num_offline_updates + config.num_online_updates
+            ) % config.policy_freq, 0
         ).astype(int)
     }
 
     # Online + offline tuning
-    env, dataset = make_env_and_dataset(config.dataset_name, config.train_seed, False, discount=config.gamma)
-    eval_env, _ = make_env_and_dataset(config.dataset_name, config.eval_seed, False, discount=config.gamma)
+    env, dataset = make_env_and_dataset(
+        config.dataset_name, config.train_seed, False, discount=config.gamma
+    )
+    eval_env, _ = make_env_and_dataset(
+        config.dataset_name, config.eval_seed, False, discount=config.gamma
+    )
 
     max_steps = env._max_episode_steps
 
@@ -818,7 +845,9 @@ def train(config: Config):
     replay_buffer = OnlineReplayBuffer(env.observation_space, action_dim,
                                        config.replay_buffer_size)
     replay_buffer.initialize_with_dataset(dataset, None)
-    online_buffer = OnlineReplayBuffer(env.observation_space, action_dim, config.replay_buffer_size)
+    online_buffer = OnlineReplayBuffer(
+        env.observation_space, action_dim, config.replay_buffer_size
+    )
 
     online_batch_size = 0
     offline_batch_size = config.batch_size
@@ -834,7 +863,10 @@ def train(config: Config):
     eval_successes = []
     train_successes = []
     print("Offline training")
-    for i in tqdm.tqdm(range(config.num_online_updates + config.num_offline_updates), smoothing=0.1):
+    for i in tqdm.tqdm(
+            range(config.num_online_updates + config.num_offline_updates),
+            smoothing=0.1
+    ):
         carry["metrics"] = Metrics.create(bc_metrics_to_log)
         if i == config.num_offline_updates:
             print("Online training")
@@ -883,7 +915,9 @@ def train(config: Config):
             next_observation, reward, done, info = env.step(action)
             if not goal_achieved:
                 goal_achieved = is_goal_reached(reward, info)
-            next_action = np.asarray(actor_action_fn(carry["actor"].params, next_observation))[0]
+            next_action = np.asarray(
+                actor_action_fn(carry["actor"].params, next_observation)
+            )[0]
             next_action = np.array(
                 [
                     (
@@ -910,7 +944,9 @@ def train(config: Config):
                 episode_step = 0
                 goal_achieved = False
 
-        if config.num_offline_updates <= i < config.num_offline_updates + config.num_warmup_steps:
+        if config.num_offline_updates <= \
+                i < \
+                config.num_offline_updates + config.num_warmup_steps:
             continue
 
         offline_batch = replay_buffer.sample(offline_batch_size)
@@ -924,9 +960,12 @@ def train(config: Config):
         actor_bc_coef = config.actor_bc_coef
         critic_bc_coef = config.critic_bc_coef
         if i >= config.num_offline_updates:
-            decay_coef = max(config.min_decay_coef, (
-                        config.num_online_updates + config.num_offline_updates - i + config.num_warmup_steps) / config.num_online_updates
-                             )
+            lin_coef = (
+                               config.num_online_updates +
+                               config.num_offline_updates -
+                               i + config.num_warmup_steps
+                       ) / config.num_online_updates
+            decay_coef = max(config.min_decay_coef, lin_coef)
             actor_bc_coef *= decay_coef
             critic_bc_coef *= 0
         if i % config.policy_freq == 0:
@@ -961,10 +1000,14 @@ def train(config: Config):
                 wandb.log({"offline_iter": i, **common})
             else:
                 wandb.log({"online_iter": i - config.num_offline_updates, **common})
-        if i % config.eval_every == 0 or i == config.num_offline_updates + config.num_online_updates - 1 or i == config.num_offline_updates - 1:
-            eval_returns, success_rate = evaluate(eval_env, carry["actor"].params, actor_action_fn,
-                                                  config.eval_episodes,
-                                                  seed=config.eval_seed)
+        if i % config.eval_every == 0 or\
+                i == config.num_offline_updates + config.num_online_updates - 1 or\
+                i == config.num_offline_updates - 1:
+            eval_returns, success_rate = evaluate(
+                eval_env, carry["actor"].params, actor_action_fn,
+                config.eval_episodes,
+                seed=config.eval_seed
+            )
             normalized_score = eval_env.get_normalized_score(eval_returns) * 100.0
             eval_successes.append(success_rate)
             if is_env_with_goal:
