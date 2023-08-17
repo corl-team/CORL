@@ -925,7 +925,8 @@ def train(config: Config):
         critic_bc_coef = config.critic_bc_coef
         if i >= config.num_offline_updates:
             decay_coef = max(config.min_decay_coef, (
-                        config.num_online_updates + config.num_offline_updates - i + config.num_warmup_steps) / config.num_online_updates)
+                        config.num_online_updates + config.num_offline_updates - i + config.num_warmup_steps) / config.num_online_updates
+                             )
             actor_bc_coef *= decay_coef
             critic_bc_coef *= 0
         if i % config.policy_freq == 0:
