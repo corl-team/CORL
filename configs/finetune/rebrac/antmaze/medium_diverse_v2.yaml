@@ -20,7 +20,7 @@ mixing_ratio: 0.5
 name: rebrac-finetune
 noise_clip: 0.5
 normalize_q: true
-normalize_reward: false
+normalize_reward: true
 normalize_states: false
 num_offline_updates: 1000000
 num_online_updates: 1000000
