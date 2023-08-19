@@ -20,10 +20,11 @@ import numpy as np
 import optax
 import pyrallis
 import tqdm
-import wandb
 from flax.core import FrozenDict
 from flax.training.train_state import TrainState
 from tqdm.auto import trange
+
+import wandb
 
 ENVS_WITH_GOAL = ("antmaze", "pen", "door", "hammer", "relocate")
 
@@ -207,46 +208,112 @@ class EnsembleCritic(nn.Module):
         return q_values
 
 
+def calc_return_to_go(is_sparse_reward, rewards, terminals, gamma):
+    """
+    A config dict for getting the default high/low rewrd values for each envs
+    This is used in calc_return_to_go func in sampler.py and replay_buffer.py
+    """
+    if len(rewards) == 0:
+        return []
+    reward_neg = 0
+    if is_sparse_reward and np.all(np.array(rewards) == reward_neg):
+        """
+        If the env has sparse reward and the trajectory is all negative rewards,
+        we use r / (1-gamma) as return to go.
+        For exapmle, if gamma = 0.99 and the rewards = [-1, -1, -1],
+        then return_to_go = [-100, -100, -100]
+        """
+        # assuming failure reward is negative
+        # use r / (1-gamma) for negative trajctory
+        return_to_go = [float(reward_neg / (1 - gamma))] * len(rewards)
+    else:
+        return_to_go = [0] * len(rewards)
+        prev_return = 0
+        for i in range(len(rewards)):
+            return_to_go[-i - 1] = \
+                rewards[-i - 1] + gamma * prev_return * (1 - terminals[-i - 1])
+            prev_return = return_to_go[-i - 1]
+
+    return return_to_go
+
+
 def qlearning_dataset(
-        env: gym.Env,
-        dataset: Dict = None,
-        terminate_on_end: bool = False,
-        **kwargs,
-) -> Dict:
+        env, dataset_name,
+        normalize_reward=False, dataset=None,
+        terminate_on_end=False, discount=0.99, **kwargs
+):
+    """
+    Returns datasets formatted for use by standard Q-learning algorithms,
+    with observations, actions, next_observations, next_actins, rewards,
+     and a terminal flag.
+    Args:
+        env: An OfflineEnv object.
+        dataset: An optional dataset to pass in for processing. If None,
+            the dataset will default to env.get_dataset()
+        terminate_on_end (bool): Set done=True on the last timestep
+            in a trajectory. Default is False, and will discard the
+            last timestep in each trajectory.
+        **kwargs: Arguments to pass to env.get_dataset().
+    Returns:
+        A dictionary containing keys:
+            observations: An N x dim_obs array of observations.
+            actions: An N x dim_action array of actions.
+            next_observations: An N x dim_obs array of next observations.
+            next_actions: An N x dim_action array of next actions.
+            rewards: An N-dim float array of rewards.
+            terminals: An N-dim boolean array of "done" or episode termination flags.
+    """
     if dataset is None:
         dataset = env.get_dataset(**kwargs)
-
-    N = dataset["rewards"].shape[0]
+    if normalize_reward:
+        dataset['rewards'] = ReplayBuffer.normalize_reward(
+            dataset_name, dataset['rewards']
+        )
+    N = dataset['rewards'].shape[0]
+    is_sparse = "antmaze" in dataset_name
     obs_ = []
     next_obs_ = []
     action_ = []
     next_action_ = []
     reward_ = []
     done_ = []
-
+    mc_returns_ = []
+    print("SIZE", N)
     # The newer version of the dataset adds an explicit
     # timeouts field. Keep old method for backwards compatability.
-    use_timeouts = "timeouts" in dataset
+    use_timeouts = 'timeouts' in dataset
 
     episode_step = 0
+    episode_rewards = []
+    episode_terminals = []
     for i in range(N - 1):
-        obs = dataset["observations"][i].astype(np.float32)
-        new_obs = dataset["observations"][i + 1].astype(np.float32)
-        action = dataset["actions"][i].astype(np.float32)
-        new_action = dataset["actions"][i + 1].astype(np.float32)
-        reward = dataset["rewards"][i].astype(np.float32)
-        done_bool = bool(dataset["terminals"][i])
+        if episode_step == 0:
+            episode_rewards = []
+            episode_terminals = []
+
+        obs = dataset['observations'][i].astype(np.float32)
+        new_obs = dataset['observations'][i + 1].astype(np.float32)
+        action = dataset['actions'][i].astype(np.float32)
+        new_action = dataset['actions'][i + 1].astype(np.float32)
+        reward = dataset['rewards'][i].astype(np.float32)
+        done_bool = bool(dataset['terminals'][i])
 
         if use_timeouts:
-            final_timestep = dataset["timeouts"][i]
+            final_timestep = dataset['timeouts'][i]
         else:
-            final_timestep = episode_step == env._max_episode_steps - 1
+            final_timestep = (episode_step == env._max_episode_steps - 1)
         if (not terminate_on_end) and final_timestep:
-            # Skip this transition
+            # Skip this transition and don't apply terminals on the last step of episode
             episode_step = 0
+            mc_returns_ += calc_return_to_go(
+                is_sparse, episode_rewards, episode_terminals, discount
+            )
             continue
         if done_bool or final_timestep:
             episode_step = 0
+
+        episode_rewards.append(reward)
+        episode_terminals.append(done_bool)
 
         obs_.append(obs)
         next_obs_.append(new_obs)
@@ -255,14 +322,19 @@ def qlearning_dataset(
         reward_.append(reward)
         done_.append(done_bool)
         episode_step += 1
-
+    if episode_step != 0:
+        mc_returns_ += calc_return_to_go(
+            is_sparse, episode_rewards, episode_terminals, discount
+        )
+    assert np.array(mc_returns_).shape == np.array(reward_).shape
     return {
-        "observations": np.array(obs_),
-        "actions": np.array(action_),
-        "next_observations": np.array(next_obs_),
-        "next_actions": np.array(next_action_),
-        "rewards": np.array(reward_),
-        "terminals": np.array(done_),
+        'observations': np.array(obs_),
+        'actions': np.array(action_),
+        'next_observations': np.array(next_obs_),
+        'next_actions': np.array(next_action_),
+        'rewards': np.array(reward_),
+        'terminals': np.array(done_),
+        'mc_returns': np.array(mc_returns_),
     }
 
 
@@ -288,7 +360,7 @@ class ReplayBuffer:
             normalize_reward: bool = False,
             is_normalize: bool = False,
     ):
-        d4rl_data = qlearning_dataset(gym.make(dataset_name))
+        d4rl_data = qlearning_dataset(gym.make(dataset_name), dataset_name)
         buffer = {
             "states": jnp.asarray(d4rl_data["observations"], dtype=jnp.float32),
             "actions": jnp.asarray(d4rl_data["actions"], dtype=jnp.float32),
@@ -451,13 +523,13 @@ class OnlineReplayBuffer(Dataset):
 
 
 class D4RLDataset(Dataset):
-    def __init__(self,
-                 env: gym.Env,
-                 env_name: str,
-                 normalize_reward: bool,
-                 discount: float,
-                 clip_to_eps: bool = False,
-                 eps: float = 1e-5):
+    def __init__(
+            self,
+             env: gym.Env,
+             env_name: str,
+             normalize_reward: bool,
+             discount: float,
+    ):
         d4rl_data = qlearning_dataset(
             env, env_name, normalize_reward=normalize_reward, discount=discount
         )
@@ -572,27 +644,28 @@ def is_goal_reached(reward: float, info: Dict) -> bool:
 
 
 def evaluate(
-        env: gym.Env,
-        params: jax.Array,
-        action_fn: Callable,
-        num_episodes: int,
-        seed: int,
-) -> np.ndarray:
+        env: gym.Env, params, action_fn: Callable, num_episodes: int, seed: int
+) -> Tuple[np.ndarray, np.ndarray]:
     env.seed(seed)
     env.action_space.seed(seed)
     env.observation_space.seed(seed)
 
     returns = []
+    successes = []
     for _ in trange(num_episodes, desc="Eval", leave=False):
         obs, done = env.reset(), False
+        goal_achieved = False
         total_reward = 0.0
         while not done:
             action = np.asarray(jax.device_get(action_fn(params, obs)))
-            obs, reward, done, _ = env.step(action)
+            obs, reward, done, info = env.step(action)
             total_reward += reward
+            if not goal_achieved:
+                goal_achieved = is_goal_reached(reward, info)
+        successes.append(float(goal_achieved))
         returns.append(total_reward)
 
-    return np.array(returns)
+    return np.array(returns), np.mean(successes)
 
 
 class CriticTrainState(TrainState):
