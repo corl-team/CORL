@@ -3,7 +3,7 @@ actor_learning_rate: 0.0003
 actor_ln: false
 actor_n_hiddens: 3
 batch_size: 256
-critic_bc_coef: 1.0
+critic_bc_coef: 0.002
 critic_learning_rate: 0.00005
 critic_ln: true
 critic_n_hiddens: 3
