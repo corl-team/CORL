@@ -25,7 +25,6 @@ from flax.core import FrozenDict
 from flax.training.train_state import TrainState
 from tqdm.auto import trange
 
-
 ENVS_WITH_GOAL = ("antmaze", "pen", "door", "hammer", "relocate")
 
 default_kernel_init = nn.initializers.lecun_normal()
