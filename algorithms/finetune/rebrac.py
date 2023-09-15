@@ -20,11 +20,11 @@ import numpy as np
 import optax
 import pyrallis
 import tqdm
+import wandb
 from flax.core import FrozenDict
 from flax.training.train_state import TrainState
 from tqdm.auto import trange
 
-import wandb
 
 ENVS_WITH_GOAL = ("antmaze", "pen", "door", "hammer", "relocate")
 
