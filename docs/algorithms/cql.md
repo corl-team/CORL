@@ -82,7 +82,7 @@ Possible extensions:
 For detailed scores on all benchmarked datasets see [benchmarks section](../benchmarks/offline.md). 
 Reports visually compare our reproduction results with original paper scores to make sure our implementation is working properly.
 
-<iframe src="https://wandb.ai/tlab/CORL/reports/-Offline-CQL--VmlldzoyNzA2MTk5" style="width:100%; height:500px" title="CQL Offline Report"></iframe>
+<iframe src="https://wandb.ai/tlab/CORL/reports/-Offline-CQL--Vmlldzo1MzM4MjY3" style="width:100%; height:500px" title="CQL Offline Report"></iframe>
 
 <iframe src="https://wandb.ai/tlab/CORL/reports/-Offline-to-Online-CQL--Vmlldzo0NTQ3NTMz" style="width:100%; height:500px" title="CQL Finetune Report"></iframe>
 
