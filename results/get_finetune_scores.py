@@ -2,8 +2,9 @@ import os
 import pickle
 
 import pandas as pd
-import wandb
 from tqdm import tqdm
+
+import wandb
 
 dataframe = pd.read_csv("runs_tables/finetune_urls.csv")
 
@@ -32,9 +33,14 @@ def get_run_scores(run_id, is_dt=False):
                 break
     for _, row in run.history(keys=[score_key], samples=5000).iterrows():
         full_scores.append(row[score_key])
+
+    for _, row in run.history(keys=["train/regret"], samples=5000).iterrows():
+        if "train/regret" in row:
+            regret = row["train/regret"]
     for _, row in run.history(keys=["eval/regret"], samples=5000).iterrows():
         if "eval/regret" in row:
             regret = row["eval/regret"]
+
     offline_iters = len(full_scores) // 2
     return full_scores[:offline_iters], full_scores[offline_iters:], regret
 

@@ -32,25 +32,24 @@ docker run --gpus=all -it --rm --name <container_name> <image_name>
 
 ## Algorithms Implemented
 
-| Algorithm                                                                                                                      | Variants Implemented                                                                                     | Wandb Report |
-|--------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------| ----------- |
-| **Offline and Offline-to-Online**                                                                                              |                                                                                                          |
-| ✅ [Conservative Q-Learning for Offline Reinforcement Learning <br>(CQL)](https://arxiv.org/abs/2006.04779)                     | [`offline/cql.py`](algorithms/offline/cql.py) <br /> [`finetune/cql.py`](algorithms/finetune/cql.py)     | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-CQL--VmlldzoyNzA2MTk5) <br /> <br /> [`Offline-to-online`](https://wandb.ai/tlab/CORL/reports/-Offline-to-Online-CQL--Vmlldzo0NTQ3NTMz)
-| ✅ [Accelerating Online Reinforcement Learning with Offline Datasets <br>(AWAC)](https://arxiv.org/abs/2006.09359)              | [`offline/awac.py`](algorithms/offline/awac.py) <br /> [`finetune/awac.py`](algorithms/finetune/awac.py) | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-AWAC--VmlldzoyNzA2MjE3) <br /> <br /> [`Offline-to-online`](https://wandb.ai/tlab/CORL/reports/-Offline-to-Online-AWAC--VmlldzozODAyNzQz)
-| ✅ [Offline Reinforcement Learning with Implicit Q-Learning <br>(IQL)](https://arxiv.org/abs/2110.06169)                        | [`offline/iql.py`](algorithms/offline/iql.py)  <br /> [`finetune/iql.py`](algorithms/finetune/iql.py)    | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-IQL--VmlldzoyNzA2MTkx) <br /> <br /> [`Offline-to-online`](https://wandb.ai/tlab/CORL/reports/-Offline-to-Online-IQL--VmlldzozNzE1MTEy)
-| **Offline-to-Online only**                                                                                                     |                                                                                                          |
-| ✅ [Supported Policy Optimization for Offline Reinforcement Learning <br>(SPOT)](https://arxiv.org/abs/2202.06239)              | [`finetune/spot.py`](algorithms/finetune/spot.py)                                                        | [`Offline-to-online`](https://wandb.ai/tlab/CORL/reports/-Offline-to-Online-SPOT--VmlldzozODk5MTgx)
-| ✅ [Cal-QL: Calibrated Offline RL Pre-Training for Efficient Online Fine-Tuning <br>(Cal-QL)](https://arxiv.org/abs/2303.05479) | [`finetune/cal_ql.py`](algorithms/finetune/cal_ql.py)                                                    | [`Offline-to-online`](https://wandb.ai/tlab/CORL/reports/-Offline-to-Online-Cal-QL--Vmlldzo0NTQ3NDk5)
-| **Offline only**                                                                                                               |                                                                                                          |
-| ✅ Behavioral Cloning <br>(BC)                                                                                                  | [`offline/any_percent_bc.py`](algorithms/offline/any_percent_bc.py)                                      |  [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-BC--VmlldzoyNzA2MjE1)
-| ✅ Behavioral Cloning-10% <br>(BC-10%)                                                                                          | [`offline/any_percent_bc.py`](algorithms/offline/any_percent_bc.py)                                      |  [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-BC-10---VmlldzoyNzEwMjcx)
-| ✅ [A Minimalist Approach to Offline Reinforcement Learning <br>(TD3+BC)](https://arxiv.org/abs/2106.06860)                     | [`offline/td3_bc.py`](algorithms/offline/td3_bc.py)                                                      | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-TD3-BC--VmlldzoyNzA2MjA0)
-| ✅ [Decision Transformer: Reinforcement Learning via Sequence Modeling <br>(DT)](https://arxiv.org/abs/2106.01345)              | [`offline/dt.py`](algorithms/offline/dt.py)                                                              | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-Decision-Transformer--VmlldzoyNzA2MTk3)
-| ✅ [Uncertainty-Based Offline Reinforcement Learning with Diversified Q-Ensemble <br>(SAC-N)](https://arxiv.org/abs/2110.01548) | [`offline/sac_n.py`](algorithms/offline/sac_n.py)                                                        | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-SAC-N--VmlldzoyNzA1NTY1)
-| ✅ [Uncertainty-Based Offline Reinforcement Learning with Diversified Q-Ensemble <br>(EDAC)](https://arxiv.org/abs/2110.01548)  | [`offline/edac.py`](algorithms/offline/edac.py)                                                          | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-EDAC--VmlldzoyNzA5ODUw)
-| ✅ [Revisiting the Minimalist Approach to Offline Reinforcement Learning <br>(ReBRAC)](https://arxiv.org/abs/2305.09836)        | [`offline/rebrac.py`](algorithms/offline/rebrac.py)                                                      | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-ReBRAC--Vmlldzo0ODkzOTQ2)
-| ✅ [Q-Ensemble for Offline RL: Don't Scale the Ensemble, Scale the Batch Size <br>(LB-SAC)](https://arxiv.org/abs/2211.11092)   | [`offline/lb_sac.py`](algorithms/offline/lb_sac.py)                                                      | [`Offline Gym-MuJoCo`](https://wandb.ai/tlab/CORL/reports/LB-SAC-D4RL-Results--VmlldzozNjIxMDY1)
-
+| Algorithm                                                                                                                      | Variants Implemented                                                                                              | Wandb Report                                                                                                                                                                                          |
+|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Offline and Offline-to-Online**                                                                                              |                                                                                                                   |                                                                                                                                                                                                       |
+| ✅ [Conservative Q-Learning for Offline Reinforcement Learning <br>(CQL)](https://arxiv.org/abs/2006.04779)                     | [`offline/cql.py`](algorithms/offline/cql.py) <br /> [`finetune/cql.py`](algorithms/finetune/cql.py)              | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-CQL--VmlldzoyNzA2MTk5) <br /> <br /> [`Offline-to-online`](https://wandb.ai/tlab/CORL/reports/-Offline-to-Online-CQL--Vmlldzo0NTQ3NTMz)       |
+| ✅ [Accelerating Online Reinforcement Learning with Offline Datasets <br>(AWAC)](https://arxiv.org/abs/2006.09359)              | [`offline/awac.py`](algorithms/offline/awac.py) <br /> [`finetune/awac.py`](algorithms/finetune/awac.py)          | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-AWAC--VmlldzoyNzA2MjE3) <br /> <br /> [`Offline-to-online`](https://wandb.ai/tlab/CORL/reports/-Offline-to-Online-AWAC--VmlldzozODAyNzQz)     |
+| ✅ [Offline Reinforcement Learning with Implicit Q-Learning <br>(IQL)](https://arxiv.org/abs/2110.06169)                        | [`offline/iql.py`](algorithms/offline/iql.py)  <br /> [`finetune/iql.py`](algorithms/finetune/iql.py)             | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-IQL--VmlldzoyNzA2MTkx) <br /> <br /> [`Offline-to-online`](https://wandb.ai/tlab/CORL/reports/-Offline-to-Online-IQL--VmlldzozNzE1MTEy)       |
+| ✅ [Revisiting the Minimalist Approach to Offline Reinforcement Learning <br>(ReBRAC)](https://arxiv.org/abs/2305.09836)        | [`offline/rebrac.py`](algorithms/offline/rebrac.py)  <br /> [`finetune/rebrac.py`](algorithms/finetune/rebrac.py) | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-ReBRAC--Vmlldzo0ODkzOTQ2) <br /> <br /> [`Offline-to-online`](https://wandb.ai/tlab/CORL/reports/-Offline-to-Online-ReBRAC--Vmlldzo1NDAyNjE5) |
+| **Offline-to-Online only**                                                                                                     |                                                                                                                   |                                                                                                                                                                                                       |
+| ✅ [Supported Policy Optimization for Offline Reinforcement Learning <br>(SPOT)](https://arxiv.org/abs/2202.06239)              | [`finetune/spot.py`](algorithms/finetune/spot.py)                                                                 | [`Offline-to-online`](https://wandb.ai/tlab/CORL/reports/-Offline-to-Online-SPOT--VmlldzozODk5MTgx)                                                                                                   |
+| ✅ [Cal-QL: Calibrated Offline RL Pre-Training for Efficient Online Fine-Tuning <br>(Cal-QL)](https://arxiv.org/abs/2303.05479) | [`finetune/cal_ql.py`](algorithms/finetune/cal_ql.py)                                                             | [`Offline-to-online`](https://wandb.ai/tlab/CORL/reports/-Offline-to-Online-Cal-QL--Vmlldzo0NTQ3NDk5)                                                                                                 |
+| **Offline only**                                                                                                               |                                                                                                                   |                                                                                                                                                                                                       |
+| ✅ Behavioral Cloning <br>(BC)                                                                                                  | [`offline/any_percent_bc.py`](algorithms/offline/any_percent_bc.py)                                               | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-BC--VmlldzoyNzA2MjE1)                                                                                                                         |
+| ✅ Behavioral Cloning-10% <br>(BC-10%)                                                                                          | [`offline/any_percent_bc.py`](algorithms/offline/any_percent_bc.py)                                               | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-BC-10---VmlldzoyNzEwMjcx)                                                                                                                     |
+| ✅ [A Minimalist Approach to Offline Reinforcement Learning <br>(TD3+BC)](https://arxiv.org/abs/2106.06860)                     | [`offline/td3_bc.py`](algorithms/offline/td3_bc.py)                                                               | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-TD3-BC--VmlldzoyNzA2MjA0)                                                                                                                     |
+| ✅ [Decision Transformer: Reinforcement Learning via Sequence Modeling <br>(DT)](https://arxiv.org/abs/2106.01345)              | [`offline/dt.py`](algorithms/offline/dt.py)                                                                       | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-Decision-Transformer--VmlldzoyNzA2MTk3)                                                                                                       |
+| ✅ [Uncertainty-Based Offline Reinforcement Learning with Diversified Q-Ensemble <br>(SAC-N)](https://arxiv.org/abs/2110.01548) | [`offline/sac_n.py`](algorithms/offline/sac_n.py)                                                                 | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-SAC-N--VmlldzoyNzA1NTY1)                                                                                                                      |
+| ✅ [Uncertainty-Based Offline Reinforcement Learning with Diversified Q-Ensemble <br>(EDAC)](https://arxiv.org/abs/2110.01548)  | [`offline/edac.py`](algorithms/offline/edac.py)                                                                   | [`Offline`](https://wandb.ai/tlab/CORL/reports/-Offline-EDAC--VmlldzoyNzA5ODUw)                                                                                                                       |
+| ✅ [Q-Ensemble for Offline RL: Don't Scale the Ensemble, Scale the Batch Size <br>(LB-SAC)](https://arxiv.org/abs/2211.11092)   | [`offline/lb_sac.py`](algorithms/offline/lb_sac.py)                                                               | [`Offline Gym-MuJoCo`](https://wandb.ai/tlab/CORL/reports/LB-SAC-D4RL-Results--VmlldzozNjIxMDY1)                                                                                                      |
 
 ## D4RL Benchmarks
 You can check the links above for learning curves and details. Here, we report reproduced **final** and **best** scores. Note that they differ by a significant margin, and some papers may use different approaches, not making it always explicit which reporting methodology they chose. If you want to re-collect our results in a more structured/nuanced manner, see [`results`](results).
@@ -170,42 +169,42 @@ You can check the links above for learning curves and details. Here, we report r
 
 ### Offline-to-Online
 #### Scores
-| **Task-Name**             |AWAC|CQL|IQL|SPOT|Cal-QL|
-|---------------------------|------------|--------|--------|-----|-----|
-|antmaze-umaze-v2|52.75 ± 8.67 →  98.75 ± 1.09|94.00 ± 1.58 →  99.50 ± 0.87|77.00 ± 0.71 →  96.50 ± 1.12|91.00 ± 2.55 →  99.50 ± 0.50|76.75 ± 7.53 →  99.75 ± 0.43|
-|antmaze-umaze-diverse-v2|56.00 ± 2.74 →  0.00 ± 0.00|9.50 ± 9.91 →  99.00 ± 1.22|59.50 ± 9.55 →  63.75 ± 25.02|36.25 ± 2.17 →  95.00 ± 3.67|32.00 ± 27.79 →  98.50 ± 1.12|
-|antmaze-medium-play-v2|0.00 ± 0.00 →  0.00 ± 0.00|59.00 ± 11.18 →  97.75 ± 1.30|71.75 ± 2.95 →  89.75 ± 1.09|67.25 ± 10.47 →  97.25 ± 1.30|71.75 ± 3.27 →  98.75 ± 1.64|
-|antmaze-medium-diverse-v2|0.00 ± 0.00 →  0.00 ± 0.00|63.50 ± 6.84 →  97.25 ± 1.92|64.25 ± 1.92 →  92.25 ± 2.86|73.75 ± 7.29 →  94.50 ± 1.66|62.00 ± 4.30 →  98.25 ± 1.48|
-|antmaze-large-play-v2|0.00 ± 0.00 →  0.00 ± 0.00|28.75 ± 7.76 →  88.25 ± 2.28|38.50 ± 8.73 →  64.50 ± 17.04|31.50 ± 12.58 →  87.00 ± 3.24|31.75 ± 8.87 →  97.25 ± 1.79|
-|antmaze-large-diverse-v2|0.00 ± 0.00 →  0.00 ± 0.00|35.50 ± 3.64 →  91.75 ± 3.96|26.75 ± 3.77 →  64.25 ± 4.15|17.50 ± 7.26 →  81.00 ± 14.14|44.00 ± 8.69 →  91.50 ± 3.91|
+| **Task-Name**             |AWAC|CQL|IQL|SPOT|Cal-QL|ReBRAC|
+|---------------------------|------------|--------|--------|-----|-----|-----|
+|antmaze-umaze-v2|52.75 ± 8.67 →  98.75 ± 1.09|94.00 ± 1.58 →  99.50 ± 0.87|77.00 ± 0.71 →  96.50 ± 1.12|91.00 ± 2.55 →  99.50 ± 0.50|76.75 ± 7.53 →  99.75 ± 0.43|98.00 ± 1.58 ->  74.75 ± 42.59|
+|antmaze-umaze-diverse-v2|56.00 ± 2.74 →  0.00 ± 0.00|9.50 ± 9.91 →  99.00 ± 1.22|59.50 ± 9.55 →  63.75 ± 25.02|36.25 ± 2.17 →  95.00 ± 3.67|32.00 ± 27.79 →  98.50 ± 1.12|73.75 ± 13.27 ->  98.00 ± 2.92|
+|antmaze-medium-play-v2|0.00 ± 0.00 →  0.00 ± 0.00|59.00 ± 11.18 →  97.75 ± 1.30|71.75 ± 2.95 →  89.75 ± 1.09|67.25 ± 10.47 →  97.25 ± 1.30|71.75 ± 3.27 →  98.75 ± 1.64|87.50 ± 3.77 ->  98.00 ± 1.58|
+|antmaze-medium-diverse-v2|0.00 ± 0.00 →  0.00 ± 0.00|63.50 ± 6.84 →  97.25 ± 1.92|64.25 ± 1.92 →  92.25 ± 2.86|73.75 ± 7.29 →  94.50 ± 1.66|62.00 ± 4.30 →  98.25 ± 1.48|85.25 ± 2.17 ->  98.75 ± 0.43|
+|antmaze-large-play-v2|0.00 ± 0.00 →  0.00 ± 0.00|28.75 ± 7.76 →  88.25 ± 2.28|38.50 ± 8.73 →  64.50 ± 17.04|31.50 ± 12.58 →  87.00 ± 3.24|31.75 ± 8.87 →  97.25 ± 1.79|68.50 ± 6.18 ->  31.50 ± 33.56|
+|antmaze-large-diverse-v2|0.00 ± 0.00 →  0.00 ± 0.00|35.50 ± 3.64 →  91.75 ± 3.96|26.75 ± 3.77 →  64.25 ± 4.15|17.50 ± 7.26 →  81.00 ± 14.14|44.00 ± 8.69 →  91.50 ± 3.91|67.00 ± 10.61 ->  72.25 ± 41.73|
 |                           |            |        |        |     |     |      |       |      |    |
-| **antmaze average**       |18.12 →  16.46|48.38 →  95.58|56.29 →  78.50|52.88 →  92.38|53.04 →  97.33|
+| **antmaze average**       |18.12 →  16.46|48.38 →  95.58|56.29 →  78.50|52.88 →  92.38|53.04 →  97.33|80.00 ->  78.88|
 |                           |            |        |        |     |     |      |       |      |    |
-|pen-cloned-v1|88.66 ± 15.10 →  86.82 ± 11.12|-2.76 ± 0.08 →  -1.28 ± 2.16|84.19 ± 3.96 →  102.02 ± 20.75|6.19 ± 5.21 →  43.63 ± 20.09|-2.66 ± 0.04 →  -2.68 ± 0.12|
-|door-cloned-v1|0.93 ± 1.66 →  0.01 ± 0.00|-0.33 ± 0.01 →  -0.33 ± 0.01|1.19 ± 0.93 →  20.34 ± 9.32|-0.21 ± 0.14 →  0.02 ± 0.31|-0.33 ± 0.01 →  -0.33 ± 0.01|
-|hammer-cloned-v1|1.80 ± 3.01 →  0.24 ± 0.04|0.56 ± 0.55 →  2.85 ± 4.81|1.35 ± 0.32 →  57.27 ± 28.49|3.97 ± 6.39 →  3.73 ± 4.99|0.25 ± 0.04 →  0.17 ± 0.17|
-|relocate-cloned-v1|-0.04 ± 0.04 →  -0.04 ± 0.01|-0.33 ± 0.01 →  -0.33 ± 0.01|0.04 ± 0.04 →  0.32 ± 0.38|-0.24 ± 0.01 →  -0.15 ± 0.05|-0.31 ± 0.05 →  -0.31 ± 0.04|
+|pen-cloned-v1|88.66 ± 15.10 →  86.82 ± 11.12|-2.76 ± 0.08 →  -1.28 ± 2.16|84.19 ± 3.96 →  102.02 ± 20.75|6.19 ± 5.21 →  43.63 ± 20.09|-2.66 ± 0.04 →  -2.68 ± 0.12|74.04 ± 11.97 ->  138.15 ± 3.22|
+|door-cloned-v1|0.93 ± 1.66 →  0.01 ± 0.00|-0.33 ± 0.01 →  -0.33 ± 0.01|1.19 ± 0.93 →  20.34 ± 9.32|-0.21 ± 0.14 →  0.02 ± 0.31|-0.33 ± 0.01 →  -0.33 ± 0.01|0.07 ± 0.04 ->  102.39 ± 8.27|
+|hammer-cloned-v1|1.80 ± 3.01 →  0.24 ± 0.04|0.56 ± 0.55 →  2.85 ± 4.81|1.35 ± 0.32 →  57.27 ± 28.49|3.97 ± 6.39 →  3.73 ± 4.99|0.25 ± 0.04 →  0.17 ± 0.17|6.54 ± 3.35 ->  124.65 ± 7.37|
+|relocate-cloned-v1|-0.04 ± 0.04 →  -0.04 ± 0.01|-0.33 ± 0.01 →  -0.33 ± 0.01|0.04 ± 0.04 →  0.32 ± 0.38|-0.24 ± 0.01 →  -0.15 ± 0.05|-0.31 ± 0.05 →  -0.31 ± 0.04|0.70 ± 0.62 ->  6.96 ± 4.59|
 |                           |            |        |        |     |     |      |       |      |    |
-| **adroit average**        |22.84 →  21.76|-0.72 →  0.22|21.69 →  44.99|2.43 →  11.81|-0.76 →  -0.79|
+| **adroit average**        |22.84 →  21.76|-0.72 →  0.22|21.69 →  44.99|2.43 →  11.81|-0.76 →  -0.79|20.33 ->  93.04|
 
 #### Regrets
-| **Task-Name**             |AWAC|CQL|IQL|SPOT|Cal-QL|
-|---------------------------|------------|--------|--------|-----|-----|
-|antmaze-umaze-v2|0.04 ± 0.01|0.02 ± 0.00|0.07 ± 0.00|0.02 ± 0.00|0.01 ± 0.00|
-|antmaze-umaze-diverse-v2|0.88 ± 0.01|0.09 ± 0.01|0.43 ± 0.11|0.22 ± 0.07|0.05 ± 0.01|
-|antmaze-medium-play-v2|1.00 ± 0.00|0.08 ± 0.01|0.09 ± 0.01|0.06 ± 0.00|0.04 ± 0.01|
-|antmaze-medium-diverse-v2|1.00 ± 0.00|0.08 ± 0.00|0.10 ± 0.01|0.05 ± 0.01|0.04 ± 0.01|
-|antmaze-large-play-v2|1.00 ± 0.00|0.21 ± 0.02|0.34 ± 0.05|0.29 ± 0.07|0.13 ± 0.02|
-|antmaze-large-diverse-v2|1.00 ± 0.00|0.21 ± 0.03|0.41 ± 0.03|0.23 ± 0.08|0.13 ± 0.02|
+| **Task-Name**             |AWAC|CQL|IQL|SPOT|Cal-QL|ReBRAC|
+|---------------------------|------------|--------|--------|-----|-----|-----|
+|antmaze-umaze-v2|0.04 ± 0.01|0.02 ± 0.00|0.07 ± 0.00|0.02 ± 0.00|0.01 ± 0.00|0.11 ± 0.18|
+|antmaze-umaze-diverse-v2|0.88 ± 0.01|0.09 ± 0.01|0.43 ± 0.11|0.22 ± 0.07|0.05 ± 0.01|0.04 ± 0.02|
+|antmaze-medium-play-v2|1.00 ± 0.00|0.08 ± 0.01|0.09 ± 0.01|0.06 ± 0.00|0.04 ± 0.01|0.03 ± 0.01|
+|antmaze-medium-diverse-v2|1.00 ± 0.00|0.08 ± 0.00|0.10 ± 0.01|0.05 ± 0.01|0.04 ± 0.01|0.03 ± 0.00|
+|antmaze-large-play-v2|1.00 ± 0.00|0.21 ± 0.02|0.34 ± 0.05|0.29 ± 0.07|0.13 ± 0.02|0.14 ± 0.05|
+|antmaze-large-diverse-v2|1.00 ± 0.00|0.21 ± 0.03|0.41 ± 0.03|0.23 ± 0.08|0.13 ± 0.02|0.29 ± 0.39|
 |                           |            |        |        |     |     |      |       |      |    |
-| **antmaze average**       |0.82|0.11|0.24|0.15|0.07|
+| **antmaze average**       |0.82|0.11|0.24|0.15|0.07|0.11|
 |                           |            |        |        |     |     |      |       |      |    |
-|pen-cloned-v1|0.46 ± 0.02|0.97 ± 0.00|0.37 ± 0.01|0.58 ± 0.02|0.98 ± 0.01|
-|door-cloned-v1|1.00 ± 0.00|1.00 ± 0.00|0.83 ± 0.03|0.99 ± 0.01|1.00 ± 0.00|
-|hammer-cloned-v1|1.00 ± 0.00|1.00 ± 0.00|0.65 ± 0.10|0.98 ± 0.01|1.00 ± 0.00|
-|relocate-cloned-v1|1.00 ± 0.00|1.00 ± 0.00|1.00 ± 0.00|1.00 ± 0.00|1.00 ± 0.00|
+|pen-cloned-v1|0.46 ± 0.02|0.97 ± 0.00|0.37 ± 0.01|0.58 ± 0.02|0.98 ± 0.01|0.08 ± 0.01|
+|door-cloned-v1|1.00 ± 0.00|1.00 ± 0.00|0.83 ± 0.03|0.99 ± 0.01|1.00 ± 0.00|0.19 ± 0.05|
+|hammer-cloned-v1|1.00 ± 0.00|1.00 ± 0.00|0.65 ± 0.10|0.98 ± 0.01|1.00 ± 0.00|0.13 ± 0.03|
+|relocate-cloned-v1|1.00 ± 0.00|1.00 ± 0.00|1.00 ± 0.00|1.00 ± 0.00|1.00 ± 0.00|0.90 ± 0.06|
 |                           |            |        |        |     |     |      |       |      |    |
-| **adroit average**        |0.86|0.99|0.71|0.89|0.99|
+| **adroit average**        |0.86|0.99|0.71|0.89|0.99|0.33|
 
 ## Citing CORL
 

@@ -76,6 +76,7 @@ regrets_std = {algo: {data: None for data in full_scores[algo]} for algo in full
 
 for algo in full_offline_scores:
     for data in full_offline_scores[algo]:
+        # print(algo, flush=True)
         full_offline_scores[algo][data] = [s[0] for s in full_scores[algo][data]]
         full_online_scores[algo][data] = [s[1] for s in full_scores[algo][data]]
         regrets[algo][data] = np.mean([s[2] for s in full_scores[algo][data]])
@@ -127,7 +128,7 @@ add_domains_avg(last_offline_scores)
 add_domains_avg(last_online_scores)
 add_domains_avg(regrets)
 
-algorithms = ["AWAC", "CQL", "IQL", "SPOT", "Cal-QL"]
+algorithms = ["AWAC", "CQL", "IQL", "SPOT", "Cal-QL", "ReBRAC",]
 datasets = dataframe["dataset"].unique()
 ordered_datasets = [
     "antmaze-umaze-v2",
@@ -417,8 +418,9 @@ algs = [
     "CQL",
     "IQL",
     "AWAC",
+    "Cal-QL",
 ]
-for a1 in ["Cal-QL"]:
+for a1 in ["ReBRAC"]:
     for a2 in algs:
         algorithm_pairs[f"{a1},{a2}"] = (flat[a1], flat[a2])
 average_probabilities, average_prob_cis = rly.get_interval_estimates(
