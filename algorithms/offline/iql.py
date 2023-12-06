@@ -29,33 +29,55 @@ LOG_STD_MAX = 2.0
 
 @dataclass
 class TrainConfig:
-    # Experiment
-    device: str = "cuda"
-    env: str = "halfcheetah-medium-expert-v2"  # OpenAI gym environment name
-    seed: int = 0  # Sets Gym, PyTorch and Numpy seeds
-    eval_freq: int = int(5e3)  # How often (time steps) we evaluate
-    n_episodes: int = 10  # How many episodes run during evaluation
-    max_timesteps: int = int(1e6)  # Max time steps to run environment
-    checkpoints_path: Optional[str] = None  # Save path
-    load_model: str = ""  # Model load file name, "" doesn't load
-    # IQL
-    buffer_size: int = 2_000_000  # Replay buffer size
-    batch_size: int = 256  # Batch size for all networks
-    discount: float = 0.99  # Discount factor
-    tau: float = 0.005  # Target network update rate
-    beta: float = 3.0  # Inverse temperature. Small beta -> BC, big beta -> maximizing Q
-    iql_tau: float = 0.7  # Coefficient for asymmetric loss
-    iql_deterministic: bool = False  # Use deterministic actor
-    normalize: bool = True  # Normalize states
-    normalize_reward: bool = False  # Normalize reward
-    vf_lr: float = 3e-4  # V function learning rate
-    qf_lr: float = 3e-4  # Critic learning rate
-    actor_lr: float = 3e-4  # Actor learning rate
-    actor_dropout: Optional[float] = None  # Adroit uses dropout for policy network
-    # Wandb logging
+    # wandb project name
     project: str = "CORL"
+    # wandb group name
     group: str = "IQL-D4RL"
+    # wandb run name
     name: str = "IQL"
+    # training dataset and evaluation environment
+    env: str = "halfcheetah-medium-expert-v2"
+    # discount factor
+    discount: float = 0.99
+    # coefficient for the target critic Polyak's update
+    tau: float = 0.005
+    # actor update inverse temperature, similar to AWAC
+    # small beta -> BC, big beta -> maximizing Q-value
+    beta: float = 3.0
+    # coefficient for asymmetric critic loss
+    iql_tau: float = 0.7
+    # whether to use deterministic actor
+    iql_deterministic: bool = False
+    # total gradient updates during training
+    max_timesteps: int = int(1e6)
+    # maximum size of the replay buffer
+    buffer_size: int = 2_000_000
+    # training batch size
+    batch_size: int = 256
+    # whether to normalize states
+    normalize: bool = True
+    # whether to normalize reward (like in IQL)
+    normalize_reward: bool = False
+    # V-critic function learning rate
+    vf_lr: float = 3e-4
+    # Q-critic learning rate
+    qf_lr: float = 3e-4
+    # actor learning rate
+    actor_lr: float = 3e-4
+    #  where to use dropout for policy network, optional
+    actor_dropout: Optional[float] = None
+    # evaluation frequency, will evaluate every eval_freq training steps
+    eval_freq: int = int(5e3)
+    # number of episodes to run during evaluation
+    n_episodes: int = 10
+    # path for checkpoints saving, optional
+    checkpoints_path: Optional[str] = None
+    # file name for loading a model, optional
+    load_model: str = ""
+    # training random seed
+    seed: int = 0
+    # training device
+    device: str = "cuda"
 
     def __post_init__(self):
         self.name = f"{self.name}-{self.env}-{str(uuid.uuid4())[:8]}"
@@ -292,6 +314,7 @@ class GaussianPolicy(nn.Module):
         self.net = MLP(
             [state_dim, *([hidden_dim] * n_hidden), act_dim],
             output_activation_fn=nn.Tanh,
+            dropout=dropout,
         )
         self.log_std = nn.Parameter(torch.zeros(act_dim, dtype=torch.float32))
         self.max_action = max_action

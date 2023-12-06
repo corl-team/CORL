@@ -1,5 +1,5 @@
 # inspiration:
-# 1. https://github.com/kzl/decision-transformer/blob/master/gym/decision_transformer/models/decision_transformer.py  # noqa
+# 1. https://github.com/kzl/decision-transformer/blob/master/gym/decision_transformer/models/decision_transformer.py
 # 2. https://github.com/karpathy/minGPT
 import os
 import random
@@ -17,44 +17,70 @@ import torch.nn as nn
 import wandb
 from torch.nn import functional as F
 from torch.utils.data import DataLoader, IterableDataset
-from tqdm.auto import tqdm, trange  # noqa
+from tqdm.auto import trange
 
 @dataclass
 class TrainConfig:
-    # wandb params
+    # wandb project name
     project: str = "CORL"
+    # wandb group name
     group: str = "DT-D4RL"
+    # wandb run name
     name: str = "DT"
-    # model params
+    # transformer hidden dim
     embedding_dim: int = 128
+    # depth of the transformer model
     num_layers: int = 3
+    # number of heads in the attention
     num_heads: int = 1
+    # maximum sequence length during training
     seq_len: int = 20
+    # maximum rollout length, needed for the positional embeddings
     episode_len: int = 1000
+    # attention dropout
     attention_dropout: float = 0.1
+    # residual dropout
     residual_dropout: float = 0.1
+    # embeddings dropout
     embedding_dropout: float = 0.1
+    # maximum range for the symmetric actions, [-1, 1]
     max_action: float = 1.0
-    # training params
+    # training dataset and evaluation environment
     env_name: str = "halfcheetah-medium-v2"
+    # AdamW optimizer learning rate
     learning_rate: float = 1e-4
+    # AdamW optimizer betas
     betas: Tuple[float, float] = (0.9, 0.999)
+    # AdamW weight decay
     weight_decay: float = 1e-4
+    # maximum gradient norm during training, optional
     clip_grad: Optional[float] = 0.25
+    # training batch size
     batch_size: int = 64
+    # total training steps
     update_steps: int = 100_000
+    # warmup steps for the learning rate scheduler
     warmup_steps: int = 10_000
+    # reward scaling, to reduce the magnitude
     reward_scale: float = 0.001
+    # number of workers for the pytorch dataloader
     num_workers: int = 4
-    # evaluation params
+    # target return-to-go for the prompting durint evaluation
     target_returns: Tuple[float, ...] = (12000.0, 6000.0)
+    # number of episodes to run during evaluation
     eval_episodes: int = 100
+    # evaluation frequency, will evaluate eval_every training steps
     eval_every: int = 10_000
-    # general params
+    # path for checkpoints saving, optional
     checkpoints_path: Optional[str] = None
+    # configure PyTorch to use deterministic algorithms instead
+    # of nondeterministic ones
     deterministic_torch: bool = False
+    # training random seed
     train_seed: int = 10
+    # evaluation random seed
     eval_seed: int = 42
+    # training device
     device: str = "cuda"
 
     def __post_init__(self):
@@ -180,7 +206,7 @@ class SequenceDataset(IterableDataset):
 
         states = (states - self.state_mean) / self.state_std
         returns = returns * self.reward_scale
-        # pad up to seq_len if needed
+        # pad up to seq_len if needed, padding is masked during training
         mask = np.hstack(
             [np.ones(states.shape[0]), np.zeros(self.seq_len - states.shape[0])]
         )

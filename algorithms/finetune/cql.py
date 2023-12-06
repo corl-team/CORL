@@ -26,7 +26,6 @@ ENVS_WITH_GOAL = ("antmaze", "pen", "door", "hammer", "relocate")
 
 @dataclass
 class TrainConfig:
-    # Experiment
     device: str = "cuda"
     env: str = "halfcheetah-medium-expert-v2"  # OpenAI gym environment name
     seed: int = 0  # Sets Gym, PyTorch and Numpy seeds
@@ -37,7 +36,6 @@ class TrainConfig:
     online_iterations: int = int(1e6)  # Number of online updates
     checkpoints_path: Optional[str] = None  # Save path
     load_model: str = ""  # Model load file name, "" doesn't load
-    # CQL
     buffer_size: int = 2_000_000  # Replay buffer size
     batch_size: int = 256  # Batch size for all networks
     discount: float = 0.99  # Discount factor
@@ -65,10 +63,9 @@ class TrainConfig:
     q_n_hidden_layers: int = 2  # Number of hidden layers in Q networks
     reward_scale: float = 1.0  # Reward scale for normalization
     reward_bias: float = 0.0  # Reward bias for normalization
-    # Wandb logging
-    project: str = "CORL"
-    group: str = "CQL-D4RL"
-    name: str = "CQL"
+    project: str = "CORL"  # wandb project name
+    group: str = "CQL-D4RL"  # wandb group name
+    name: str = "CQL"  # wandb run name
 
     def __post_init__(self):
         self.name = f"{self.name}-{self.env}-{str(uuid.uuid4())[:8]}"

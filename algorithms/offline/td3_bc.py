@@ -22,32 +22,51 @@ TensorBatch = List[torch.Tensor]
 
 @dataclass
 class TrainConfig:
-    # Experiment
-    device: str = "cuda"
-    env: str = "halfcheetah-medium-expert-v2"  # OpenAI gym environment name
-    seed: int = 0  # Sets Gym, PyTorch and Numpy seeds
-    eval_freq: int = int(5e3)  # How often (time steps) we evaluate
-    n_episodes: int = 10  # How many episodes run during evaluation
-    max_timesteps: int = int(1e6)  # Max time steps to run environment
-    checkpoints_path: Optional[str] = None  # Save path
-    load_model: str = ""  # Model load file name, "" doesn't load
-    # TD3
-    buffer_size: int = 2_000_000  # Replay buffer size
-    batch_size: int = 256  # Batch size for all networks
-    discount: float = 0.99  # Discount ffor
-    expl_noise: float = 0.1  # Std of Gaussian exploration noise
-    tau: float = 0.005  # Target network update rate
-    policy_noise: float = 0.2  # Noise added to target actor during critic update
-    noise_clip: float = 0.5  # Range to clip target actor noise
-    policy_freq: int = 2  # Frequency of delayed actor updates
-    # TD3 + BC
-    alpha: float = 2.5  # Coefficient for Q function in actor loss
-    normalize: bool = True  # Normalize states
-    normalize_reward: bool = False  # Normalize reward
-    # Wandb logging
+    # wandb project name
     project: str = "CORL"
+    # wandb group name
     group: str = "TD3_BC-D4RL"
+    # wandb run name
     name: str = "TD3_BC"
+    # training dataset and evaluation environment
+    env: str = "halfcheetah-medium-expert-v2"
+    # coefficient for the Q-function in actor loss
+    alpha: float = 2.5
+    # discount factor
+    discount: float = 0.99
+    # standard deviation for the gaussian exploration noise
+    expl_noise: float = 0.1
+    # coefficient for the target critic Polyak's update
+    tau: float = 0.005
+    # scalig coefficient for the noise added to
+    # target actor during critic update
+    policy_noise: float = 0.2
+    # range for the target actor noise clipping
+    noise_clip: float = 0.5
+    # actor update delay
+    policy_freq: int = 2
+    # total gradient updates during training
+    max_timesteps: int = int(1e6)
+    # maximum size of the replay buffer
+    buffer_size: int = 2_000_000
+    # training batch size
+    batch_size: int = 256
+    # whether to normalize states
+    normalize: bool = True
+    # whether to normalize reward (like in IQL)
+    normalize_reward: bool = False
+    # evaluation frequency, will evaluate every eval_freq training steps
+    eval_freq: int = int(5e3)
+    # number of episodes to run during evaluation
+    n_episodes: int = 10
+    # path for checkpoints saving, optional
+    checkpoints_path: Optional[str] = None
+    # file name for loading a model, optional
+    load_model: str = ""
+    # training random seed
+    seed: int = 0
+    # training device
+    device: str = "cuda"
 
     def __post_init__(self):
         self.name = f"{self.name}-{self.env}-{str(uuid.uuid4())[:8]}"

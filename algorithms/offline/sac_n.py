@@ -21,36 +21,57 @@ from tqdm import trange
 
 @dataclass
 class TrainConfig:
-    # wandb params
+    # wandb project name
     project: str = "CORL"
+    # wandb group name
     group: str = "SAC-N"
+    # wandb run name
     name: str = "SAC-N"
-    # model params
+    # actor and critic hidden dim
     hidden_dim: int = 256
+    # critic ensemble size
     num_critics: int = 10
+    # discount factor
     gamma: float = 0.99
+    # coefficient for the target critic Polyak's update
     tau: float = 5e-3
+    # actor learning rate
     actor_learning_rate: float = 3e-4
+    # critic learning rate
     critic_learning_rate: float = 3e-4
+    # entropy coefficient learning rate for automatic tuning
     alpha_learning_rate: float = 3e-4
+    # maximum range for the symmetric actions, [-1, 1]
     max_action: float = 1.0
-    # training params
+    # maximum size of the replay buffer
     buffer_size: int = 1_000_000
+    # training dataset and evaluation environment
     env_name: str = "halfcheetah-medium-v2"
+    # training batch size
     batch_size: int = 256
+    # total number of training epochs
     num_epochs: int = 3000
+    # number of gradient updates during one epoch
     num_updates_on_epoch: int = 1000
+    # whether to normalize reward (like in IQL)
     normalize_reward: bool = False
-    # evaluation params
+    # number of episodes to run during evaluation
     eval_episodes: int = 10
+    # evaluation frequency, will evaluate eval_every training steps
     eval_every: int = 5
-    # general params
+    # path for checkpoints saving, optional
     checkpoints_path: Optional[str] = None
+    # configure PyTorch to use deterministic algorithms instead
+    # of nondeterministic ones
     deterministic_torch: bool = False
+    # training random seed
     train_seed: int = 10
+    # evaluation random seed
     eval_seed: int = 42
+    # frequency of metrics logging to the wandb
     log_every: int = 100
-    device: str = "cpu"
+    # training device
+    device: str = "cuda"
 
     def __post_init__(self):
         self.name = f"{self.name}-{self.env_name}-{str(uuid.uuid4())[:8]}"
@@ -465,6 +486,8 @@ def eval_actor(
     return np.array(episode_rewards)
 
 
+# normalization like in the IQL paper
+# https://github.com/ikostrikov/implicit_q_learning/blob/09d700248117881a75cb21f0adb95c6c8a694cb2/train_offline.py#L35 # noqa
 def return_reward_range(dataset, max_episode_steps):
     returns, lengths = [], []
     ep_ret, ep_len = 0.0, 0

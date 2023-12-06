@@ -1,0 +1,85 @@
+site_name: Clean Offline RL
+theme:
+  name: material
+  logo: assets/logo.jpeg
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+#    - toc.integrate
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - header.autohide
+    - content.code.copy
+    - content.code.annotate
+
+copyright: Copyright &copy; 2022, CORL Team
+
+repo_url: https://github.com/corl-team/CORL
+repo_name: corl-team/CORL
+
+markdown_extensions:
+  - meta
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.emoji:
+        emoji_index: !!python/name:materialx.emoji.twemoji
+        emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tasklist:
+      custom_checkbox: true
+      clickable_checkbox: false
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Overview: index.md
+  - Get Started:
+      - get-started/install.md
+      - get-started/usage.md
+  - Benchmarks:
+      - benchmarks/offline.md
+      - benchmarks/offline-to-online.md
+      - benchmarks/repro.md
+  - Algorithms:
+      - algorithms/bc.md
+      - algorithms/td3-bc.md
+      - algorithms/dt.md
+      - algorithms/sac-n.md
+      - algorithms/edac.md
+      - algorithms/rebrac.md
+      - algorithms/lb-sac.md
+      - algorithms/cql.md
+      - algorithms/awac.md
+      - algorithms/iql.md
+      - algorithms/cal-ql.md
+      - algorithms/spot.md
+  - Community:
+      - community/contrib.md
+      - community/publications.md

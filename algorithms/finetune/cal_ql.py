@@ -68,9 +68,9 @@ class TrainConfig:
     mixing_ratio: float = 0.5  # Data mixing ratio for online tuning
     is_sparse_reward: bool = False  # Use sparse reward
     # Wandb logging
-    project: str = "CORL"
-    group: str = "Cal-QL-D4RL"
-    name: str = "Cal-QL"
+    project: str = "CORL"  # wandb project name
+    group: str = "Cal-QL-D4RL"  # wandb group name
+    name: str = "Cal-QL"  # wandb run name
 
     def __post_init__(self):
         self.name = f"{self.name}-{self.env}-{str(uuid.uuid4())[:8]}"
@@ -670,7 +670,7 @@ class CalQL:
         mc_returns: torch.Tensor,
         alpha: torch.Tensor,
         log_dict: Dict,
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    ) -> torch.Tensor:
         q1_predicted = self.critic_1(observations, actions)
         q2_predicted = self.critic_2(observations, actions)
 
@@ -874,7 +874,7 @@ class CalQL:
             )
         )
 
-        return qf_loss, alpha_prime, alpha_prime_loss
+        return qf_loss
 
     def train(self, batch: TensorBatch) -> Dict[str, float]:
         (
@@ -904,7 +904,7 @@ class CalQL:
         )
 
         """ Q function loss """
-        qf_loss, alpha_prime, alpha_prime_loss = self._q_loss(
+        qf_loss = self._q_loss(
             observations,
             actions,
             next_observations,

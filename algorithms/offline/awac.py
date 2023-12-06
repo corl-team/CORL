@@ -20,29 +20,49 @@ TensorBatch = List[torch.Tensor]
 
 @dataclass
 class TrainConfig:
+    # wandb project name
     project: str = "CORL"
+    # wandb group name
     group: str = "AWAC-D4RL"
+    # wandb run name
     name: str = "AWAC"
-    checkpoints_path: Optional[str] = None
-
+    # training dataset and evaluation environment
     env_name: str = "halfcheetah-medium-expert-v2"
-    seed: int = 42
-    test_seed: int = 69
-    deterministic_torch: bool = False
-    device: str = "cuda"
-
-    buffer_size: int = 2_000_000
-    num_train_ops: int = 1_000_000
-    batch_size: int = 256
-    eval_frequency: int = 1000
-    n_test_episodes: int = 10
-    normalize_reward: bool = False
-
+    # actor and critic hidden dim
     hidden_dim: int = 256
+    # actor and critic learning rate
     learning_rate: float = 3e-4
+    # discount factor
     gamma: float = 0.99
+    # coefficient for the target critic Polyak's update
     tau: float = 5e-3
+    # awac actor loss temperature, controlling balance
+    # between behaviour cloning and Q-value maximization
     awac_lambda: float = 1.0
+    # total number of gradient updated during training
+    num_train_ops: int = 1_000_000
+    # training batch size
+    batch_size: int = 256
+    # maximum size of the replay buffer
+    buffer_size: int = 2_000_000
+    # whether to normalize reward (like in IQL)
+    normalize_reward: bool = False
+    # evaluation frequency, will evaluate every eval_frequency
+    # training steps
+    eval_frequency: int = 1000
+    # number of episodes to run during evaluation
+    n_test_episodes: int = 10
+    # path for checkpoints saving, optional
+    checkpoints_path: Optional[str] = None
+    # configure PyTorch to use deterministic algorithms instead
+    # of nondeterministic ones
+    deterministic_torch: bool = False
+    # training random seed
+    seed: int = 42
+    # evaluation random seed
+    test_seed: int = 69
+    # training device
+    device: str = "cuda"
 
     def __post_init__(self):
         self.name = f"{self.name}-{self.env_name}-{str(uuid.uuid4())[:8]}"

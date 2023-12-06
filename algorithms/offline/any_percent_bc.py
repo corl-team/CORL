@@ -19,26 +19,40 @@ TensorBatch = List[torch.Tensor]
 
 @dataclass
 class TrainConfig:
-    # Experiment
-    device: str = "cuda"
-    env: str = "halfcheetah-medium-expert-v2"  # OpenAI gym environment name
-    seed: int = 0  # Sets Gym, PyTorch and Numpy seeds
-    eval_freq: int = int(5e3)  # How often (time steps) we evaluate
-    n_episodes: int = 10  # How many episodes run during evaluation
-    max_timesteps: int = int(1e6)  # Max time steps to run environment
-    checkpoints_path: Optional[str] = None  # Save path
-    load_model: str = ""  # Model load file name, "" doesn't load
-    batch_size: int = 256  # Batch size for all networks
-    discount: float = 0.99  # Discount factor
-    # BC
-    buffer_size: int = 2_000_000  # Replay buffer size
-    frac: float = 0.1  # Best data fraction to use
-    max_traj_len: int = 1000  # Max trajectory length
-    normalize: bool = True  # Normalize states
-    # Wandb logging
+    # wandb project name
     project: str = "CORL"
+    # wandb group name
     group: str = "BC-D4RL"
+    # wandb run name
     name: str = "BC"
+    # training dataset and evaluation environment
+    env: str = "halfcheetah-medium-expert-v2"
+    # total gradient updates during training
+    max_timesteps: int = int(1e6)
+    # training batch size
+    batch_size: int = 256
+    # maximum size of the replay buffer
+    buffer_size: int = 2_000_000
+    # what top fraction of the dataset (sorted by return) to use
+    frac: float = 0.1
+    # maximum possible trajectory length
+    max_traj_len: int = 1000
+    # whether to normalize states
+    normalize: bool = True
+    # discount factor
+    discount: float = 0.99
+    # evaluation frequency, will evaluate eval_freq training steps
+    eval_freq: int = int(5e3)
+    # number of episodes to run during evaluation
+    n_episodes: int = 10
+    # path for checkpoints saving, optional
+    checkpoints_path: Optional[str] = None
+    # file name for loading a model, optional
+    load_model: str = ""
+    # training random seed
+    seed: int = 0
+    # training device
+    device: str = "cuda"
 
     def __post_init__(self):
         self.name = f"{self.name}-{self.env}-{str(uuid.uuid4())[:8]}"
