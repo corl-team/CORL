@@ -54,8 +54,6 @@ class TrainConfig:
     normalize: bool = True  # Normalize states
     normalize_reward: bool = False  # Normalize reward
     q_n_hidden_layers: int = 3  # Number of hidden layers in Q networks
-    reward_scale: float = 1.0  # Reward scale for normalization
-    reward_bias: float = 0.0  # Reward bias for normalization
     bc_steps: int = int(0)  # Number of BC steps at start
     reward_scale: float = 5.0  # Reward scale for normalization
     reward_bias: float = -1.0  # Reward bias for normalization
